@@ -3,6 +3,7 @@ package queue
 import (
 	"github.com/twmb/franz-go/pkg/kgo"
 	"strings"
+	"time"
 )
 
 func NewKafkaProduceConn(
@@ -13,6 +14,9 @@ func NewKafkaProduceConn(
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(strings.Join(seeds, ",")),
 		kgo.DefaultProduceTopic(topic),
+		kgo.RecordDeliveryTimeout(10*time.Second),
+		kgo.RequiredAcks(kgo.AllISRAcks()),
+		kgo.AllowAutoTopicCreation(),
 	)
 	if err != nil {
 		return nil, err
@@ -28,8 +32,11 @@ func NewKafkaConsumeConn(
 
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(strings.Join(seeds, ",")),
+		kgo.AllowAutoTopicCreation(),
 		kgo.ConsumerGroup(group),
 		kgo.ConsumeTopics(topic...),
+		kgo.RecordDeliveryTimeout(10*time.Second),
+		kgo.RequiredAcks(kgo.AllISRAcks()),
 	)
 	if err != nil {
 		return nil, err
