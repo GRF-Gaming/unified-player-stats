@@ -1,5 +1,10 @@
 package models
 
+import (
+	"log/slog"
+	"time"
+)
+
 type EventFromGame struct {
 	// ApiKey Reforger does not permit setting of headers
 	// ApiKey ApiKeyV1    `json:"api_key,required" vd:"len($)>0"`
@@ -22,11 +27,19 @@ func (e *EventFromGame) ExtractKillRecords() []*EventKillRecord {
 	var allKills []*EventKillRecord
 
 	for _, k := range e.Kills {
-		allKills = append(allKills, &EventKillRecord{
+
+		kill := &EventKillRecord{
 			EventKillFromGame: k,
 			ServerName:        e.ServerName,
 			GameName:          e.GameName,
-		})
+		}
+
+		if kill.Time.IsZero() {
+			slog.Debug("Kill event had zero time, using server time as default")
+			kill.Time = time.Now()
+		}
+
+		allKills = append(allKills, kill)
 	}
 
 	return allKills
