@@ -2,6 +2,15 @@ version: '3'
 
 tasks:
 
+  test:
+    deps:
+      - test:backend
+
+  test:backend:
+    dir: ./backend
+    cmds:
+      - go test ./... --race
+
   docker:
     cmds:
       - docker compose --file docker-compose.single.yml --env-file .env.dev.single up --build
