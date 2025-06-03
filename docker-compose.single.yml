@@ -60,6 +60,16 @@ services:
     networks:
       local-network:
 
+  ups-process-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-process-kill
+    environment:
+      - PRO_KAFKA_SEEDS=${PRO_KAFKA_SEEDS}
+      - PRO_KAFKA_GROUP=${PRO_KAFKA_GROUP}
+      - PRO_TOPIC_KILLS=${PRO_TOPIC_KILLS}
+    networks:
+      local-network:
 
 networks:
   local-network:
