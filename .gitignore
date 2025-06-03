@@ -1,3 +1,8 @@
 
 ### IDE Files
 .idea/
+
+### Envs
+*.env
+*.env.*
+!*.sample
