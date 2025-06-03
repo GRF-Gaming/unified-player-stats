@@ -6,7 +6,9 @@ import (
 	"backend/internal/queue"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/bytedance/sonic"
+	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"log"
 	"log/slog"
@@ -41,6 +43,15 @@ func GetAggregator() *Aggregator {
 	})
 
 	return aggregatorSingleton
+}
+
+func (a *Aggregator) Serve(port int) {
+
+	h := server.Default(server.WithHostPorts(fmt.Sprintf("0.0.0.0:%d", port)))
+
+	h.POST("/events", handleEvents)
+
+	h.Spin()
 }
 
 func (a *Aggregator) CleanUp() {

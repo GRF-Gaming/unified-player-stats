@@ -12,10 +12,12 @@ import (
 
 func main() {
 
-	slog.Info("Ensuring that environment are set")
+	slog.Info("Ensuring that aggregator environment variables are set")
 	e := env_var.GetAggVars()
 
-	slog.Info("Starting server...", "port", e.AggPort)
+	// Setting aggregator service
+	slog.Info("Starting aggregator...", "port", e.AggPort)
+	a := aggregator.GetAggregator()
 
 	// Setup listener for signal interrupts etc.
 	c := make(chan os.Signal, 1)
@@ -26,12 +28,12 @@ func main() {
 		sig := <-c
 		slog.Warn("Received OS signal, stopping server", "signal", sig)
 		// Perform cleanup
-		aggregator.GetAggregator().CleanUp()
+		a.CleanUp()
 		shutdownWg.Done()
 	}()
 
 	// Start server
-	aggregator.Serve(e.AggPort)
+	a.Serve(e.AggPort)
 	shutdownWg.Wait()
 
 }

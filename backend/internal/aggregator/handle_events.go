@@ -18,6 +18,7 @@ func handleEvents(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	// TODO API key implementation (project tagging and API key creation)
 	//if err := req.ApiKey.Validate(); err != nil {
 	//	slog.Error("Improper API key")
 	//}
