@@ -75,10 +75,10 @@ func (p *Processor) Spin() {
 			})
 
 			// Commit offset
-			p.kafkaConsumer.AllowRebalance()
 			if err := p.kafkaConsumer.CommitUncommittedOffsets(p.ctx); err != nil {
 				slog.Error("Unable to commit offset", "err", err)
 			}
+			p.kafkaConsumer.AllowRebalance()
 		}
 
 	}
@@ -86,7 +86,6 @@ func (p *Processor) Spin() {
 }
 
 func (p *Processor) CleanUp() {
-
 	p.cancelFunc()
-
+	p.kafkaConsumer.Close()
 }
