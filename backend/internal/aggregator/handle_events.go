@@ -14,8 +14,8 @@ func handleEvents(ctx context.Context, c *app.RequestContext) {
 
 	req := pools.EventFromGamePool.Get().(*models.EventFromGame)
 	defer pools.EventFromGamePool.Put(req)
-	
-	if err := c.BindAndValidate(&req); err != nil {
+
+	if err := c.BindAndValidate(req); err != nil {
 		slog.Error("Unable to unpack request", "err", err)
 		c.JSON(consts.StatusBadRequest, utils.H{"status": "error"})
 		return
