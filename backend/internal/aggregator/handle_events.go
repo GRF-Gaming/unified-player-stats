@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"backend/internal/models"
+	"backend/internal/pools"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
@@ -11,7 +12,9 @@ import (
 
 func handleEvents(ctx context.Context, c *app.RequestContext) {
 
-	var req models.EventFromGame
+	req := pools.EventFromGamePool.Get().(*models.EventFromGame)
+	defer pools.EventFromGamePool.Put(req)
+	
 	if err := c.BindAndValidate(&req); err != nil {
 		slog.Error("Unable to unpack request", "err", err)
 		c.JSON(consts.StatusBadRequest, utils.H{"status": "error"})

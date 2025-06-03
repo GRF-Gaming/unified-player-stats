@@ -72,6 +72,8 @@ func (p *Processor) Spin() {
 			fetches.EachRecord(func(r *kgo.Record) {
 				// TODO process record
 				slog.Info("Record", "val", string(r.Value))
+				killRecord := pools.EventKillRecordPool.Get().(*models.EventKillRecord)
+				defer pools.EventKillRecordPool.Put(killRecord)
 			})
 
 			// Commit offset
