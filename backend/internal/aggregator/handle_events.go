@@ -11,18 +11,29 @@ import (
 
 func handleEvents(ctx context.Context, c *app.RequestContext) {
 
-	var req models.Event
+	var req models.EventFromGame
 	if err := c.BindAndValidate(&req); err != nil {
 		slog.Error("Unable to unpack request", "err", err)
 		c.JSON(consts.StatusBadRequest, utils.H{})
 		return
 	}
 
-	if err := req.ApiKey.Validate(); err != nil {
-		slog.Error("Improper API key")
-	}
+	//if err := req.ApiKey.Validate(); err != nil {
+	//	slog.Error("Improper API key")
+	//}
 
-	slog.Info("Received", "data", req)
+	slog.Debug("Received event update from game server", "event", req)
+
+	// Acquire agg instance
+	agg := GetAggregator()
+
+	// Send events to kafka
+	err := agg.EmitBatchKillEvent(ctx, req.ExtractKillRecords())
+	if err != nil {
+		slog.Error("Unable to send kill events to kafka")
+		c.JSON(consts.StatusInternalServerError, utils.H{})
+		return
+	}
 
 	c.JSON(consts.StatusOK, utils.H{"message": "pong"})
 	return
