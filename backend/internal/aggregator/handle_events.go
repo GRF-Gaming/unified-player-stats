@@ -14,7 +14,7 @@ func handleEvents(ctx context.Context, c *app.RequestContext) {
 	var req models.EventFromGame
 	if err := c.BindAndValidate(&req); err != nil {
 		slog.Error("Unable to unpack request", "err", err)
-		c.JSON(consts.StatusBadRequest, utils.H{})
+		c.JSON(consts.StatusBadRequest, utils.H{"status": "error"})
 		return
 	}
 
@@ -31,10 +31,10 @@ func handleEvents(ctx context.Context, c *app.RequestContext) {
 	err := agg.EmitBatchKillEvent(ctx, req.ExtractKillRecords())
 	if err != nil {
 		slog.Error("Unable to send kill events to kafka")
-		c.JSON(consts.StatusInternalServerError, utils.H{})
+		c.JSON(consts.StatusInternalServerError, utils.H{"status": "error"})
 		return
 	}
 
-	c.JSON(consts.StatusOK, utils.H{"message": "pong"})
+	c.JSON(consts.StatusOK, utils.H{"status": "ok"})
 	return
 }
