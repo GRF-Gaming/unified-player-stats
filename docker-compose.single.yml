@@ -1,0 +1,70 @@
+
+
+services:
+  ups-kafka-broker:
+    image: apache/kafka:3.9.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093 # Correct: Listen on all interfaces inside container
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ups-kafka-broker:9092 # Corrected: For host access via port mapping
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@ups-kafka-broker:9093 # Corrected: Controller refers to itself as localhost
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+    volumes:
+      - usp-kafka-broker-vol:/var/lib/kafka
+    ports:
+      - "9093:9093" # Controller listener port mapped (useful for some tools or multi-node in future)
+      - "9092:9092" # Broker listener port mapped (essential for your Go app)
+    networks:
+      local-network:
+
+
+  ups-pg-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ups-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - usp-pg-db-vol:/var/lib/postgresql/data
+    ports:
+      - "9876:5432"
+    networks:
+      local-network:
+
+  ups-redis-db:
+    image: redis:7
+    volumes:
+      - usp-redis-db-vol:/data
+    ports:
+      - "6379:6379"
+    networks:
+      local-network:
+
+  ups-aggregator-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-aggregate
+    environment:
+      - AGG_KAFKA_SEEDS=${AGG_KAFKA_SEEDS}
+      - AGG_TOPIC_KILLS=${AGG_TOPIC_KILLS}
+      - AGG_PORT=${AGG_PORT}
+    ports:
+      - "${AGG_PORT}:${AGG_PORT}"
+    networks:
+      local-network:
+
+
+networks:
+  local-network:
+
+volumes:
+  usp-kafka-broker-vol:
+  usp-pg-db-vol:
+  usp-redis-db-vol:
