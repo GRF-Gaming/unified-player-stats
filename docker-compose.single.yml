@@ -68,6 +68,7 @@ services:
       - PRO_KAFKA_SEEDS=${PRO_KAFKA_SEEDS}
       - PRO_KAFKA_GROUP=${PRO_KAFKA_GROUP}
       - PRO_TOPIC_KILLS=${PRO_TOPIC_KILLS}
+      - PRO_KAFKA_ID=${PRO_KAFKA_ID}
     networks:
       local-network:
 

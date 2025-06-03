@@ -24,7 +24,7 @@ func GetProcessor() *Processor {
 	processorOnce.Do(func() {
 
 		e := env_var.GetProVars()
-		consumer, err := queue.NewKafkaConsumeConn(e.ProKafkaSeeds, e.ProKafkaGroup, e.ProTopicKills)
+		consumer, err := queue.NewKafkaConsumeConn(e.ProKafkaId, e.ProKafkaSeeds, e.ProKafkaGroup, e.ProTopicKills)
 		if err != nil {
 			slog.Error("Unable to create kafka consumer client for kill processor")
 		}

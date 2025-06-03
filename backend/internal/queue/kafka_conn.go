@@ -25,6 +25,7 @@ func NewKafkaProduceConn(
 }
 
 func NewKafkaConsumeConn(
+	consumerId string,
 	seeds []string,
 	group string,
 	topic string,
@@ -37,6 +38,7 @@ func NewKafkaConsumeConn(
 		kgo.ConsumeTopics(topic),
 		kgo.RecordDeliveryTimeout(10*time.Second),
 		kgo.RequiredAcks(kgo.AllISRAcks()),
+		kgo.InstanceID(consumerId),
 	)
 	if err != nil {
 		return nil, err

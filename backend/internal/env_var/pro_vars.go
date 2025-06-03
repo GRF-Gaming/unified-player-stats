@@ -17,6 +17,7 @@ type ProVars struct {
 	ProKafkaSeeds          []string
 	ProKafkaGroup          string `env:"PRO_KAFKA_GROUP,required,notEmpty"`
 	ProTopicKills          string `env:"PRO_TOPIC_KILLS,required,notEmpty"`
+	ProKafkaId             string `env:"PRO_KAFKA_ID,required,notEmpty"`
 }
 
 func (p *ProVars) validateAndPopulate() error {
