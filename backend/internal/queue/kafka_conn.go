@@ -27,14 +27,14 @@ func NewKafkaProduceConn(
 func NewKafkaConsumeConn(
 	seeds []string,
 	group string,
-	topic []string,
+	topic string,
 ) (*kgo.Client, error) {
 
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(strings.Join(seeds, ",")),
 		kgo.AllowAutoTopicCreation(),
 		kgo.ConsumerGroup(group),
-		kgo.ConsumeTopics(topic...),
+		kgo.ConsumeTopics(topic),
 		kgo.RecordDeliveryTimeout(10*time.Second),
 		kgo.RequiredAcks(kgo.AllISRAcks()),
 	)
