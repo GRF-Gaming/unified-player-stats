@@ -7,7 +7,7 @@ type EventKillFromGame struct {
 	PlayerName     string    `json:"player_name,required" vd:"len($)>0"` // PlayerName is the in-game name of the player
 	KilledEntityId string    `json:"killed_entity_id,required"`          // KilledEntityId only specifies the killed PLAYER; "" => AI
 	IsFriendly     bool      `json:"is_friendly,required"`               // IsFriendly specifies if the kill was a friendly kill
-	Time           time.Time `json:"time,required"`                      // Time Recorded of kill event from server
+	Time           time.Time `json:"time"`                               // Time Recorded of kill event from server
 }
 
 type EventKillRecord struct {
