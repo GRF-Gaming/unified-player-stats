@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	totalKillsKeyFmt         = "player:kills:total:%s"
-	totalFriendlyKillsKeyFmt = "player:friendly_kills:total:%s"
-	totalDeathsKeyFmt        = "player:deaths:total:%s"
+	totalKillsKeyFmt         = "%s:%s:player:kills:total:%s"
+	totalFriendlyKillsKeyFmt = "%s:%s:player:friendly_kills:total:%s"
+	totalDeathsKeyFmt        = "%s:%s:player:deaths:total:%s"
 )
 
 type KillStore struct {
@@ -30,18 +30,18 @@ func (k *KillStore) Close() {
 	}
 }
 
-func (k *KillStore) RecordKill(ctx context.Context, playerId string) error {
-	key := fmt.Sprintf(totalKillsKeyFmt, playerId)
+func (k *KillStore) RecordKill(ctx context.Context, gameName string, serverName string, playerId string) error {
+	key := fmt.Sprintf(totalKillsKeyFmt, gameName, serverName, playerId)
 	return k.redisConn.Incr(ctx, key).Err()
 }
 
-func (k *KillStore) RecordFriendlyKill(ctx context.Context, playerId string) error {
-	key := fmt.Sprintf(totalFriendlyKillsKeyFmt, playerId)
+func (k *KillStore) RecordFriendlyKill(ctx context.Context, gameName string, serverName string, playerId string) error {
+	key := fmt.Sprintf(totalFriendlyKillsKeyFmt, gameName, serverName, playerId)
 	return k.redisConn.Incr(ctx, key).Err()
 }
 
-func (k *KillStore) RecordDeath(ctx context.Context, playerId string) error {
-	key := fmt.Sprintf(totalDeathsKeyFmt, playerId)
+func (k *KillStore) RecordDeath(ctx context.Context, gameName string, serverName string, playerId string) error {
+	key := fmt.Sprintf(totalDeathsKeyFmt, gameName, serverName, playerId)
 	return k.redisConn.Incr(ctx, key).Err()
 }
 
@@ -72,8 +72,8 @@ func (k *KillStore) executeNumericRedisQuery(ctx context.Context, key string) (i
 	return res, nil
 }
 
-func (k *KillStore) GetTotalKills(ctx context.Context, playerId string) (int64, error) {
-	key := fmt.Sprintf(totalKillsKeyFmt, playerId)
+func (k *KillStore) GetTotalKills(ctx context.Context, gameName string, serverName string, playerId string) (int64, error) {
+	key := fmt.Sprintf(totalKillsKeyFmt, gameName, serverName, playerId)
 	res, err := k.executeNumericRedisQuery(ctx, key)
 	if err != nil {
 		slog.Error("Unable to query for total kills")
@@ -81,8 +81,8 @@ func (k *KillStore) GetTotalKills(ctx context.Context, playerId string) (int64, 
 	return res, nil
 }
 
-func (k *KillStore) GetTotalFriendlyKills(ctx context.Context, playerId string) (int64, error) {
-	key := fmt.Sprintf(totalFriendlyKillsKeyFmt, playerId)
+func (k *KillStore) GetTotalFriendlyKills(ctx context.Context, gameName string, serverName string, playerId string) (int64, error) {
+	key := fmt.Sprintf(totalFriendlyKillsKeyFmt, gameName, serverName, playerId)
 	res, err := k.executeNumericRedisQuery(ctx, key)
 	if err != nil {
 		slog.Error("Unable to query for total friendly kills")
@@ -90,8 +90,8 @@ func (k *KillStore) GetTotalFriendlyKills(ctx context.Context, playerId string) 
 	return res, nil
 }
 
-func (k *KillStore) GetTotalDeaths(ctx context.Context, playerId string) (int64, error) {
-	key := fmt.Sprintf(totalDeathsKeyFmt, playerId)
+func (k *KillStore) GetTotalDeaths(ctx context.Context, gameName string, serverName string, playerId string) (int64, error) {
+	key := fmt.Sprintf(totalDeathsKeyFmt, gameName, serverName, playerId)
 	res, err := k.executeNumericRedisQuery(ctx, key)
 	if err != nil {
 		slog.Error("Unable to query for total deaths")
