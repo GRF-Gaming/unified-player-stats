@@ -69,6 +69,9 @@ services:
       - PRO_KAFKA_GROUP=${PRO_KAFKA_GROUP}
       - PRO_TOPIC_KILLS=${PRO_TOPIC_KILLS}
       - PRO_KAFKA_ID=${PRO_KAFKA_ID}
+      - PRO_REDIS_ADDR=${PRO_REDIS_ADDR}
+      - PRO_REDIS_PORT=${PRO_REDIS_PORT}
+      - PRO_REDIS_DB_NUMBER=${PRO_REDIS_DB_NUMBER}
     networks:
       - local-network
 
