@@ -33,10 +33,10 @@ func GetProcessor() *Processor {
 		e := env_var.GetProVars()
 
 		consumer, err := queue.NewKafkaConsumeConn(
-			e.ProKafkaId,
-			e.ProKafkaSeeds,
-			e.ProKafkaGroup,
-			e.ProTopicKills,
+			e.ProKillsKafkaId,
+			e.ProKillsKafkaSeeds,
+			e.ProKillsKafkaGroup,
+			e.ProKillsTopicKills,
 		)
 		if err != nil {
 			slog.Error("Unable to create kafka consumer client for kill processor")
@@ -44,11 +44,11 @@ func GetProcessor() *Processor {
 		}
 
 		rClient, err := db.NewRedisClient(
-			e.ProRedisAddr,
-			e.ProRedisPort,
-			e.ProRedisPassword,
-			e.ProRedisDbNumber,
-			e.ProRedisMaxActiveConn,
+			e.ProKillsRedisAddr,
+			e.ProKillsRedisPort,
+			e.ProKillsRedisPassword,
+			e.ProKillsRedisDbNumber,
+			e.ProKillsRedisMaxActiveConn,
 		)
 		if err != nil {
 			slog.Error("Unable to create redis conn client for kill processor")
@@ -91,7 +91,7 @@ func (p *Processor) Spin() {
 				}
 
 				for _, e := range err {
-					slog.Error("Unable to fetch from Kafka", "seeds", envPro.ProKafkaSeeds, "topic", envPro.ProTopicKills, "group", envPro.ProKafkaGroup, "err", e.Err)
+					slog.Error("Unable to fetch from Kafka", "seeds", envPro.ProKillsKafkaSeeds, "topic", envPro.ProKillsTopicKills, "group", envPro.ProKillsKafkaGroup, "err", e.Err)
 				}
 			}
 

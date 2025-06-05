@@ -8,32 +8,32 @@ import (
 )
 
 var (
-	proVarsOnce               = sync.Once{}
-	proVarsSingleton *ProVars = &ProVars{}
+	proVarsOnce                    = sync.Once{}
+	proVarsSingleton *ProKillsVars = &ProKillsVars{}
 )
 
-type ProVars struct {
-	ProKafkaSeedsRawString string `env:"PRO_KAFKA_SEEDS,required,notEmpty"`
-	ProKafkaSeeds          []string
-	ProKafkaGroup          string `env:"PRO_KAFKA_GROUP,required,notEmpty"`
-	ProTopicKills          string `env:"PRO_TOPIC_KILLS,required,notEmpty"`
-	ProKafkaId             string `env:"PRO_KAFKA_ID,required,notEmpty"`
+type ProKillsVars struct {
+	ProKillsKafkaSeedsRawString string `env:"PRO_KILLS_KAFKA_SEEDS,required,notEmpty"`
+	ProKillsKafkaSeeds          []string
+	ProKillsKafkaGroup          string `env:"PRO_KILLS_KAFKA_GROUP,required,notEmpty"`
+	ProKillsTopicKills          string `env:"PRO_KILLS_TOPIC_KILLS,required,notEmpty"`
+	ProKillsKafkaId             string `env:"PRO_KILLS_KAFKA_ID,required,notEmpty"`
 
-	ProRedisAddr          string `env:"PRO_REDIS_ADDR,required,notEmpty"`
-	ProRedisPort          int    `env:"PRO_REDIS_PORT,required,notEmpty"`
-	ProRedisPassword      string `env:"PRO_REDIS_PASSWORD" envDefault:""`
-	ProRedisDbNumber      int    `env:"PRO_REDIS_DB_NUMBER,required,notEmpty"`
-	ProRedisMaxActiveConn int    `env:"PRO_REDIS_MAX_ACTIVE_CONN" envDefault:"5"`
+	ProKillsRedisAddr          string `env:"PRO_KILLS_REDIS_ADDR,required,notEmpty"`
+	ProKillsRedisPort          int    `env:"PRO_KILLS_REDIS_PORT,required,notEmpty"`
+	ProKillsRedisPassword      string `env:"PRO_KILLS_REDIS_PASSWORD" envDefault:""`
+	ProKillsRedisDbNumber      int    `env:"PRO_KILLS_REDIS_DB_NUMBER,required,notEmpty"`
+	ProKillsRedisMaxActiveConn int    `env:"PRO_KILLS_REDIS_MAX_ACTIVE_CONN" envDefault:"5"`
 }
 
-func (p *ProVars) validateAndPopulate() error {
+func (p *ProKillsVars) validateAndPopulate() error {
 
-	p.ProKafkaSeeds = strings.Split(p.ProKafkaSeedsRawString, ",")
+	p.ProKillsKafkaSeeds = strings.Split(p.ProKillsKafkaSeedsRawString, ",")
 
 	return nil
 }
 
-func GetProVars() *ProVars {
+func GetProVars() *ProKillsVars {
 	proVarsOnce.Do(func() {
 		if err := env.Parse(proVarsSingleton); err != nil {
 			log.Fatal(err)
