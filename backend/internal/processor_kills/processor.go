@@ -1,10 +1,16 @@
 package processor_kills
 
 import (
+	"backend/internal/db"
 	"backend/internal/env_var"
+	"backend/internal/models"
+	"backend/internal/pools"
 	"backend/internal/queue"
+	"backend/internal/store"
 	"context"
+	"github.com/bytedance/sonic"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"log"
 	"log/slog"
 	"sync"
 )
@@ -18,15 +24,35 @@ type Processor struct {
 	ctx           context.Context
 	cancelFunc    context.CancelFunc
 	kafkaConsumer *kgo.Client
+	killStore     *store.KillStore
 }
 
 func GetProcessor() *Processor {
 	processorOnce.Do(func() {
 
 		e := env_var.GetProVars()
-		consumer, err := queue.NewKafkaConsumeConn(e.ProKafkaId, e.ProKafkaSeeds, e.ProKafkaGroup, e.ProTopicKills)
+
+		consumer, err := queue.NewKafkaConsumeConn(
+			e.ProKafkaId,
+			e.ProKafkaSeeds,
+			e.ProKafkaGroup,
+			e.ProTopicKills,
+		)
 		if err != nil {
 			slog.Error("Unable to create kafka consumer client for kill processor")
+			log.Fatal("Unable to create Processor")
+		}
+
+		rClient, err := db.NewRedisClient(
+			e.ProRedisAddr,
+			e.ProRedisPort,
+			e.ProRedisPassword,
+			e.ProRedisDbNumber,
+			e.ProRedisMaxActiveConn,
+		)
+		if err != nil {
+			slog.Error("Unable to create redis conn client for kill processor")
+			log.Fatal("Unable to create Processor")
 		}
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -35,6 +61,7 @@ func GetProcessor() *Processor {
 			ctx:           ctx,
 			cancelFunc:    cancel,
 			kafkaConsumer: consumer,
+			killStore:     store.NewKillStore(rClient),
 		}
 	})
 
@@ -42,6 +69,8 @@ func GetProcessor() *Processor {
 }
 
 func (p *Processor) Spin() {
+
+	envPro := env_var.GetProVars()
 
 	for {
 		select {
@@ -61,8 +90,6 @@ func (p *Processor) Spin() {
 					return
 				}
 
-				envPro := env_var.GetProVars()
-
 				for _, e := range err {
 					slog.Error("Unable to fetch from Kafka", "seeds", envPro.ProKafkaSeeds, "topic", envPro.ProTopicKills, "group", envPro.ProKafkaGroup, "err", e.Err)
 				}
@@ -70,10 +97,18 @@ func (p *Processor) Spin() {
 
 			// Process fetched records
 			fetches.EachRecord(func(r *kgo.Record) {
-				// TODO process record
-				slog.Info("Record", "val", string(r.Value))
 				killRecord := pools.EventKillRecordPool.Get().(*models.EventKillRecord)
 				defer pools.EventKillRecordPool.Put(killRecord)
+				if err := sonic.Unmarshal(r.Value, killRecord); err != nil {
+					slog.Error("Unable to unmarshal kill record, dropping", "record", string(r.Value))
+					p.kafkaConsumer.MarkCommitRecords(r)
+					return
+				}
+				if err := p.ProcessKillRecord(killRecord); err != nil {
+					slog.Error("Unable to process record", "event", string(r.Value))
+					return
+				}
+				p.kafkaConsumer.MarkCommitRecords(r)
 			})
 
 			// Commit offset
@@ -82,12 +117,30 @@ func (p *Processor) Spin() {
 			}
 			p.kafkaConsumer.AllowRebalance()
 		}
-
 	}
-
 }
 
 func (p *Processor) CleanUp() {
 	p.cancelFunc()
 	p.kafkaConsumer.Close()
+	p.killStore.Close()
+}
+
+func (p *Processor) ProcessKillRecord(r *models.EventKillRecord) error {
+
+	// Handle updating of KillStore
+	if err := p.killStore.RecordKill(p.ctx, r.PlayerId); err != nil {
+		return err
+	}
+	if r.IsFriendly {
+		if err := p.killStore.RecordFriendlyKill(p.ctx, r.PlayerId); err != nil {
+			return err
+		}
+	}
+	if err := p.killStore.RecordDeath(p.ctx, r.KilledEntityId); err != nil {
+		return err
+	}
+
+	return nil
+
 }
