@@ -8,6 +8,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"log/slog"
+	"time"
 )
 
 func handleEvents(ctx context.Context, c *app.RequestContext) {
@@ -19,6 +20,11 @@ func handleEvents(ctx context.Context, c *app.RequestContext) {
 		slog.Error("Unable to unpack request", "err", err)
 		c.JSON(consts.StatusBadRequest, utils.H{"status": "error"})
 		return
+	}
+
+	// Defaults event time to current time
+	if req.Time.IsZero() {
+		req.Time = time.Now()
 	}
 
 	// TODO API key implementation (project tagging and API key creation)

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log/slog"
 	"time"
 )
 
@@ -20,6 +19,12 @@ type EventFromGame struct {
 
 	// Kills Recorded kill events on the server
 	Kills []EventKillFromGame `json:"kills,required" vd:"len($)>0"`
+
+	// Players is a list of players currently in the server at given time event
+	Players PlayerIdMap `json:"players"`
+
+	// Time is the timestamp for this update from the server
+	Time time.Time `json:"time"`
 }
 
 func (e *EventFromGame) ExtractKillRecords() []*EventKillRecord {
@@ -35,8 +40,7 @@ func (e *EventFromGame) ExtractKillRecords() []*EventKillRecord {
 		}
 
 		if kill.Time.IsZero() {
-			slog.Debug("Kill event had zero time, using server time as default")
-			kill.Time = time.Now()
+			kill.Time = e.Time
 		}
 
 		allKills = append(allKills, kill)
