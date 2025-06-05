@@ -7,6 +7,6 @@ import (
 
 var EventFromGamePool = sync.Pool{
 	New: func() interface{} {
-		return new(models.EventFromGame)
+		return new(models.UpdateFromGame)
 	},
 }

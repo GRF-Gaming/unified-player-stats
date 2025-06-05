@@ -49,7 +49,7 @@ func (a *Aggregator) Serve(port int) {
 
 	h := server.Default(server.WithHostPorts(fmt.Sprintf("0.0.0.0:%d", port)))
 
-	h.POST("/events", handleEvents)
+	h.POST("/update", handleEvents)
 
 	h.Spin()
 }

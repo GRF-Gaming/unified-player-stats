@@ -13,7 +13,7 @@ import (
 
 func handleEvents(ctx context.Context, c *app.RequestContext) {
 
-	req := pools.EventFromGamePool.Get().(*models.EventFromGame)
+	req := pools.EventFromGamePool.Get().(*models.UpdateFromGame)
 	defer pools.EventFromGamePool.Put(req)
 
 	if err := c.BindAndValidate(req); err != nil {

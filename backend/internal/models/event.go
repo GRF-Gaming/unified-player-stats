@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type EventFromGame struct {
+type UpdateFromGame struct {
 	// ApiKey Reforger does not permit setting of headers
 	// ApiKey ApiKeyV1    `json:"api_key,required" vd:"len($)>0"`
 
@@ -27,7 +27,7 @@ type EventFromGame struct {
 	Time time.Time `json:"time"`
 }
 
-func (e *EventFromGame) ExtractKillRecords() []*EventKillRecord {
+func (e *UpdateFromGame) ExtractKillRecords() []*EventKillRecord {
 
 	var allKills []*EventKillRecord
 
