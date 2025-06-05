@@ -6,7 +6,7 @@ import (
 	"log/slog"
 )
 
-func NewRedisConn(addr string, port int, password string, db int, maxActiveConns int) (*redis.Client, error) {
+func NewRedisClient(addr string, port int, password string, db int, maxActiveConns int) (*redis.Client, error) {
 	if addr == "" {
 		return nil, DbInvalidAddr
 	}
