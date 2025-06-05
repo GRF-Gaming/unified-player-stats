@@ -14,7 +14,3 @@ tasks:
   docker:
     cmds:
       - docker compose --file docker-compose.single.yml --env-file .env.dev.single up --build
-
-  db:
-    cmds:
-      - docker compose --file docker-compose.dev-db.yml up

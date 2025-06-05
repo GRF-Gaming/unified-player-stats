@@ -47,6 +47,13 @@ services:
     networks:
       - local-network
 
+  ups-influx-db:
+    image: influxdb:2.7
+    volumes:
+      - ups-influx-db-config:/etc/influxdb2
+      - ups-influx-db-vol:/var/lib/influxdb2
+
+
   ups-aggregator-service:
     build:
       context: ./backend
@@ -60,7 +67,7 @@ services:
     networks:
       - local-network
 
-  ups-process-service:
+  ups-process-kill-service:
     build:
       context: ./backend
       dockerfile: Dockerfile-process-kill
@@ -82,3 +89,5 @@ volumes:
   usp-kafka-broker-vol:
   usp-pg-db-vol:
   usp-redis-db-vol:
+  ups-influx-db-vol:
+  ups-influx-db-config:
