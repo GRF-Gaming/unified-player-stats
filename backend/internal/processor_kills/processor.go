@@ -129,15 +129,15 @@ func (p *Processor) CleanUp() {
 func (p *Processor) ProcessKillRecord(r *models.EventKillRecord) error {
 
 	// Handle updating of KillStore
-	if err := p.killStore.RecordKill(p.ctx, r.GameName, r.ServerName, r.PlayerId); err != nil {
+	if err := p.killStore.RecordKill(p.ctx, r.GameName, r.ServerName, r.Time, r.PlayerId); err != nil {
 		return err
 	}
 	if r.IsFriendly {
-		if err := p.killStore.RecordFriendlyKill(p.ctx, r.GameName, r.ServerName, r.PlayerId); err != nil {
+		if err := p.killStore.RecordFriendlyKill(p.ctx, r.GameName, r.ServerName, r.Time, r.PlayerId); err != nil {
 			return err
 		}
 	}
-	if err := p.killStore.RecordDeath(p.ctx, r.GameName, r.ServerName, r.KilledEntityId); err != nil {
+	if err := p.killStore.RecordDeath(p.ctx, r.GameName, r.ServerName, r.Time, r.KilledEntityId); err != nil {
 		return err
 	}
 

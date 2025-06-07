@@ -7,4 +7,5 @@ var (
 	DbInvalidAddr        = errors.New("invalid host address")
 	DbInvalidPort        = errors.New("invalid port")
 	DbInvalidMaxConnSize = errors.New("invalid max conn size")
+	RedisUpdateError     = errors.New("unable to update redis")
 )
