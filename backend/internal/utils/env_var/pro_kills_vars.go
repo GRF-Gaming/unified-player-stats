@@ -33,7 +33,7 @@ func (p *ProKillsVars) validateAndPopulate() error {
 	return nil
 }
 
-func GetProVars() *ProKillsVars {
+func GetProKillsVars() *ProKillsVars {
 	proVarsOnce.Do(func() {
 		if err := env.Parse(proVarsSingleton); err != nil {
 			log.Fatal(err)

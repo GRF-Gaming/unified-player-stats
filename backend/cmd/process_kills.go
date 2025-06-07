@@ -1,8 +1,8 @@
 package main
 
 import (
-	"backend/internal/env_var"
 	"backend/internal/processor_kills"
+	"backend/internal/utils/env_var"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -13,7 +13,7 @@ import (
 func main() {
 
 	slog.Info("Ensuring processor environment variable are set")
-	_ = env_var.GetProVars()
+	_ = env_var.GetProKillsVars()
 
 	slog.Info("Starting processor...")
 	p := processor_kills.GetProcessor()
