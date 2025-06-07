@@ -12,8 +12,8 @@ The UPS project is developed with community engagement in mind – to keep track
 
 **Backend**
 - [ ] Individual Player Statistics
-  - [x] Tracks the number of kills by each player (unique identifier).
-  - [ ] Graphical representation of kill count over time.
+  - [x] Tracks the number of kills/deaths/FF by each player (unique identifier).
+  - [ ] Hour based tracking of kills/deaths/FF – to be used for graphical representation.
   - [ ] Tracking of player name changes.
 - [ ] Game Server Statistics
   - [ ] Online players
@@ -21,6 +21,9 @@ The UPS project is developed with community engagement in mind – to keep track
     - [ ] Total number of captures
     - [ ] Server performance (server FPS)
     - [ ] Number of entities on the server
+
+**Integration**
+- [ ] WebHook integration
 - [ ] Discord integration
   - [ ] Kill feed updates
   - [ ] Event feed updates
