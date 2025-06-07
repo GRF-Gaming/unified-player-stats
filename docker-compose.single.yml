@@ -47,13 +47,6 @@ services:
     networks:
       - local-network
 
-  ups-influx-db:
-    image: influxdb:2.7
-    volumes:
-      - ups-influx-db-config:/etc/influxdb2
-      - ups-influx-db-vol:/var/lib/influxdb2
-
-
   ups-aggregator-service:
     build:
       context: ./backend
