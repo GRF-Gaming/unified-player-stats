@@ -2,11 +2,11 @@ package processor_kills
 
 import (
 	"backend/internal/db"
-	"backend/internal/env_var"
 	"backend/internal/models"
-	"backend/internal/pools"
 	"backend/internal/queue"
 	"backend/internal/store"
+	"backend/internal/utils/env_var"
+	"backend/internal/utils/pools"
 	"context"
 	"github.com/bytedance/sonic"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -17,7 +17,7 @@ import (
 
 var (
 	processorSingleton *Processor
-	processorOnce      sync.Once = sync.Once{}
+	processorOnce      = sync.Once{}
 )
 
 type Processor struct {
@@ -30,7 +30,7 @@ type Processor struct {
 func GetProcessor() *Processor {
 	processorOnce.Do(func() {
 
-		e := env_var.GetProVars()
+		e := env_var.GetProKillsVars()
 
 		consumer, err := queue.NewKafkaConsumeConn(
 			e.ProKillsKafkaId,
@@ -70,7 +70,7 @@ func GetProcessor() *Processor {
 
 func (p *Processor) Spin() {
 
-	envPro := env_var.GetProVars()
+	envPro := env_var.GetProKillsVars()
 
 	for {
 		select {

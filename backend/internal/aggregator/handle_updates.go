@@ -2,7 +2,7 @@ package aggregator
 
 import (
 	"backend/internal/models"
-	"backend/internal/pools"
+	"backend/internal/utils/pools"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"

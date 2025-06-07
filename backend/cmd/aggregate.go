@@ -2,7 +2,7 @@ package main
 
 import (
 	"backend/internal/aggregator"
-	"backend/internal/env_var"
+	"backend/internal/utils/env_var"
 	"log/slog"
 	"os"
 	"os/signal"

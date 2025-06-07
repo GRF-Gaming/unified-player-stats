@@ -1,9 +1,9 @@
 package aggregator
 
 import (
-	"backend/internal/env_var"
 	"backend/internal/models"
 	"backend/internal/queue"
+	"backend/internal/utils/env_var"
 	"context"
 	"errors"
 	"fmt"
