@@ -72,7 +72,13 @@ func (k *KillStore) RecordKill(
 	return recordErr
 }
 
-func (k *KillStore) RecordFriendlyKill(ctx context.Context, gameName string, serverName string, time time.Time, playerId string) error {
+func (k *KillStore) RecordFriendlyKill(
+	ctx context.Context,
+	gameName string,
+	serverName string,
+	time time.Time,
+	playerId string,
+) error {
 
 	var recordErr error
 
@@ -102,7 +108,13 @@ func (k *KillStore) RecordFriendlyKill(ctx context.Context, gameName string, ser
 	return recordErr
 }
 
-func (k *KillStore) RecordDeath(ctx context.Context, gameName string, serverName string, time time.Time, playerId string) error {
+func (k *KillStore) RecordDeath(
+	ctx context.Context,
+	gameName string,
+	serverName string,
+	time time.Time,
+	playerId string,
+) error {
 	var recordErr error
 
 	// Incr global count
