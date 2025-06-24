@@ -70,7 +70,8 @@ func (e *EventStore) RecordKill(
 	return nil
 }
 
-func (e *EventStore) RecordFriendlyKillWithVictim(ctx context.Context,
+func (e *EventStore) RecordFriendlyKillWithVictim(
+	ctx context.Context,
 	gameName string,
 	serverName string,
 	time time.Time,
